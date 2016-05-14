@@ -1,72 +1,79 @@
 
 public class AgentElement {
-	public AgentElement(String name) {
-		this.name = name;
+	public AgentElement(String symbol) {
+		this.symbol = symbol;
 		this.visited = false;
 	}
 	
-	public String getName() {
-		return this.name;
+	public String getSymbol() {
+		return this.symbol;
 	}
 	
 	public boolean getIsVisited() {
 		return this.visited;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
 	}
 	
 	public void setVisited(boolean visited) {
 		this.visited = visited;
 	}
 	
+	public void updateAgentElement(char ch) {
+		String symbol = String.valueOf(ch);
+		setSymbol(symbol);
+	}
 	
 	
 	//that area hasn't been explored
 	public boolean isUnknown() {
-		return (this.name.equals("unknown")) ? true: false;
+		return (this.symbol.equals("u")) ? true: false;
 	}
 	
 	//just a blank path you can walk on
 	public boolean isPath() {
-		return (this.name.equals("path")) ? true: false;
+		return (this.symbol.equals(" ")) ? true: false;
 	}
 	
 	public boolean isTree() {
-		return (this.name.equals("tree")) ? true: false;
+		return (this.symbol.equals("T")) ? true: false;
 	}
 
 	public boolean isDoor() {
-		return (this.name.equals("door")) ? true: false;
+		return (this.symbol.equals("-")) ? true: false;
 	}
 
 	public boolean isWater() {
-		return (this.name.equals("water")) ? true: false;
+		return (this.symbol.equals("~")) ? true: false;
 	}
 
 	public boolean isWall() {
-		return (this.name.equals("wall")) ? true: false;
+		return (this.symbol.equals("*")) ? true: false;
 	}
 
 	public boolean isAxe() {
-		return (this.name.equals("axe")) ? true: false;
+		return (this.symbol.equals("a")) ? true: false;
 	}
 
 	public boolean isKey() {
-		return (this.name.equals("key")) ? true: false;
+		return (this.symbol.equals("k")) ? true: false;
 	}
 
 	public boolean isStone() {
-		return (this.name.equals("stone")) ? true: false;
+		return (this.symbol.equals("o")) ? true: false;
 	}
 
+	public boolean isPlacedStone() {
+		return (this.symbol.equals("O")) ? true: false;
+	}
 	public boolean isGold() {
-		return (this.name.equals("gold")) ? true: false;
+		return (this.symbol.equals('g')) ? true: false;
 	}
 	
 	
 	
-	private String name; // Can be "path", "unknown",       "tree", "water",  "stone", "door", "wall", "axe", "key", "gold". 
+	private String symbol; // Can be "path", "unknown",       "tree", "water",  "stone", "door", "wall", "axe", "key", "gold". 
 	private Boolean visited;
 }

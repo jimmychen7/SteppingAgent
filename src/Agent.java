@@ -1,8 +1,9 @@
 /*********************************************
  *  Agent.java 
- *  Sample Agent for Text-Based Adventure Game
+ *  Agent for Text-Based Adventure Game
  *  COMP3411 Artificial Intelligence
  *  UNSW Session 1, 2016
+ *  Jimmy Chen & Weilon Ying
 */
 
 import java.util.*;
@@ -11,31 +12,35 @@ import java.net.*;
 
 public class Agent {
 
-   public char get_action( char view[][] ) {
+   public char get_action( char view[][] ) { 
+	   int ch=0;
+	   		
+	      System.out.print("Enter Action(s): ");
 
-      // REPLACE THIS CODE WITH AI TO CHOOSE ACTION
+	      try {
+	         while ( ch != -1 ) {
+	            // read character from keyboard
+	            ch  = System.in.read();
 
-      int ch=0;
+	            switch( ch ) { // if character is a valid action, return it
+	            case 'F': case 'f':
+	            	if(agentMap.canGoForward(num_stones_held)) {
+	            		agentMap.updateCurrPosition((char)ch);
+	            	}	            	
+	            case 'L': case 'R':
+	            case 'l': case 'r':
+	            	agentMap.updateDirection((char)ch);	            	
+	            case 'C': case 'U':
+	            case 'c': case 'u':    	
+	            	return((char) ch );             
+	            }
+	         }
+	      }
+	      catch (IOException e) {
+	         System.out.println ("IO error:" + e );
+	      }
 
-      System.out.print("Enter Action(s): ");
-
-      try {
-         while ( ch != -1 ) {
-            // read character from keyboard
-            ch  = System.in.read();
-
-            switch( ch ) { // if character is a valid action, return it
-            case 'F': case 'L': case 'R': case 'C': case 'U':
-            case 'f': case 'l': case 'r': case 'c': case 'u':
-               return((char) ch );
-            }
-         }
-      }
-      catch (IOException e) {
-         System.out.println ("IO error:" + e );
-      }
-
-      return 0;
+	      return 0;     
    }
 
    void print_view( char view[][] )
@@ -69,6 +74,7 @@ public class Agent {
       int port;
       int ch;
       int i,j;
+      
 
       if( args.length < 2 ) {
          System.out.println("Usage: java Agent -p <port>\n");
@@ -88,7 +94,8 @@ public class Agent {
       }
 
       try { // scan 5-by-5 wintow around current location
-         while( true ) {
+         
+    	  while( true ) {
             for( i=0; i < 5; i++ ) {
                for( j=0; j < 5; j++ ) {
                   if( !(( i == 2 )&&( j == 2 ))) {
@@ -101,6 +108,10 @@ public class Agent {
                }
             }
             agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
+            
+            agentMap.updateMap(view);
+            agentMap.print();
+            
             action = agent.get_action( view );
             out.write( action );
          }
@@ -116,4 +127,13 @@ public class Agent {
          catch( IOException e ) {}
       }
    }
+   
+   final static int EAST   = 0;
+   final static int NORTH  = 1;
+   final static int WEST   = 2;
+   final static int SOUTH  = 3;     
+   static AgentMap agentMap = new AgentMap();
+   boolean have_gold = false;
+   int num_stones_held = 0;      
+   
 }
