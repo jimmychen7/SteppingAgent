@@ -72,6 +72,11 @@ public class AgentElement {
 		return (this.symbol.equals('g')) ? true: false;
 	}
 	
+	public boolean isObstacle() {
+		if(isWater() || isWall() || isTree() || isDoor()) return true;
+		return false;
+	}
+	
 	
 	
 	private String symbol; // Can be "path", "unknown",       "tree", "water",  "stone", "door", "wall", "axe", "key", "gold". 

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class AgentMap {
 	
@@ -7,15 +9,13 @@ public class AgentMap {
 			for(int j = 0; j < 159; j++)
 				agentMap[j][i] = new AgentElement("u"); // u = unknown, haven't seen it yet
 
-				currPosition = new int[2];
-				currPosition[0] = 79;  //start Position is (79.79)
-				currPosition[1] = 79;
+				currPosition = new Coordinate(79,79); //start Position is (79.79)
 				dirn = NORTH;
 	}
 	
 	public void updateCurrPosition(char ch) {		
-		int xCurrPos = currPosition[1];
-		int yCurrPos = currPosition[0];
+		int xCurrPos = currPosition.x;
+		int yCurrPos = currPosition.y;
 		
 		if(ch == 'F' || ch == 'f') {
 			switch ( dirn ) {
@@ -26,18 +26,16 @@ public class AgentMap {
 			}
 		}
 
-		this.currPosition[0] = yCurrPos;
-		this.currPosition[1] = xCurrPos;
-	
+		this.currPosition = new Coordinate(xCurrPos, yCurrPos);
 	}
 	
-	public int[] getCurrPosition() {
+	public Coordinate getCurrPosition() {
 		return this.currPosition;
 	}
 	
 	public void updateMap(char[][] view) {
-		int xCurrPos = currPosition[1];
-		int yCurrPos = currPosition[0];
+		int xCurrPos = currPosition.x;
+		int yCurrPos = currPosition.y;
 		int i, j, k, l;
 		
 		switch( dirn ) {
@@ -116,8 +114,8 @@ public class AgentMap {
 	
 	public boolean canGoForward(int num_stones_held) {
 		
-		int xPos = currPosition[1];
-		int yPos = currPosition[0];
+		int xPos = currPosition.x;
+		int yPos = currPosition.y;
 
 		switch ( dirn ) {
 		case NORTH: yPos--; break;
@@ -132,6 +130,63 @@ public class AgentMap {
 		if(agentMap[yPos][xPos].isPlacedStone()) return true;
 		return false;
 	}
+	
+	/**
+	 * Gets the coordinate of the closet unvisited and unobstructed node that it can get to.
+	 * Uses A* to determine if it is reachable (Not reachable if A* expands more than N nodes, where N is proportionate to the observable map size)
+	 * @return 
+	 */
+	public Coordinate toVisit() {
+		int level = 1;
+		Coordinate topLeft, topRight, botLeft, botRight;
+		Coordinate currCoord;
+		
+		while(level < 10) {		
+		topLeft = new Coordinate(currPosition.x - level, currPosition.y - level);
+		topRight = new Coordinate(currPosition.x + level, currPosition.y - level);
+		botLeft = new Coordinate(currPosition.x - level, currPosition.y + level);
+		botRight = new Coordinate(currPosition.x + level, currPosition.y + level);
+		
+		currCoord = new Coordinate(topLeft.x, topLeft.y);
+		while(currCoord != topRight) {
+			if(agentMap[currCoord.y][currCoord.x].isObstacle() == false && !agentMap[currCoord.y][currCoord.x].getIsVisited()) {
+				return currCoord;
+			}
+			currCoord.x++;
+		}
+		
+		currCoord = new Coordinate(topRight.x, topRight.y);
+		while(currCoord != botRight) {
+			if(agentMap[currCoord.y][currCoord.x].isObstacle() == false && !agentMap[currCoord.y][currCoord.x].getIsVisited()) {
+				return currCoord;
+			}
+			currCoord.y++;
+		}
+		
+		currCoord = new Coordinate(botRight.x, botRight.y);
+		while(currCoord != botLeft) {
+			if(agentMap[currCoord.y][currCoord.x].isObstacle() == false && !agentMap[currCoord.y][currCoord.x].getIsVisited()) {
+				return currCoord;
+			}
+			currCoord.x--;
+		}
+		
+		currCoord = new Coordinate(botLeft.x, botLeft.y);
+		while(currCoord != botLeft) {
+			if(agentMap[currCoord.y][currCoord.x].isObstacle() == false && !agentMap[currCoord.y][currCoord.x].getIsVisited()) {
+				return currCoord;
+			}
+			currCoord.y--;
+		}	
+		
+		level++;	
+		}
+		
+		currCoord = new Coordinate(-1, -1);
+		return currCoord;
+	}
+	
+	
 	public void print() {
 		String name;
 		int i,j;
@@ -161,9 +216,9 @@ public class AgentMap {
 		}
 			
 	}
-	
+    	
 	private AgentElement[][] agentMap;
-	private int[] currPosition;
+	private Coordinate currPosition;
 	int dirn;
 	final static int EAST   = 0;
     final static int NORTH  = 1;
