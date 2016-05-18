@@ -127,6 +127,9 @@ public class Agent {
          catch( IOException e ) {}
       }
    }
+   private List getPath (Coordinate destination) {
+	   return null;
+   }
    
    final static int EAST   = 0;
    final static int NORTH  = 1;
