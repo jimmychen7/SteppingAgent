@@ -216,6 +216,9 @@ public class AgentMap {
 		}
 			
 	}
+	public AgentElement[][] getAgentElements() {
+		return agentMap;
+	}
     	
 	private AgentElement[][] agentMap;
 	private Coordinate currPosition;

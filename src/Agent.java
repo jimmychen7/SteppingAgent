@@ -43,8 +43,7 @@ public class Agent {
 	      return 0;     
     }
 
-    void print_view( char view[][] )
-    {
+    void print_view( char view[][] ) {
       int i,j;
 
       System.out.println("\n+-----+");
@@ -126,8 +125,32 @@ public class Agent {
 		   catch( IOException e ) {}
 	   }
    	}
-   	private List getPath (Coordinate destination) {
-   		return null;
+   
+   	private void getPath (Coordinate destination) {
+   		
+   		AStarSearch search = new AStarSearch();
+   		List<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
+   				destination, agentMap);
+   		
+   	}
+   	
+   	private char getCommand( Coordinate start, Coordinate dest) {
+   		
+   	}
+   	private int getDirection (Coordinate start, Coordinate dest) {
+   		if (start.x < dest.x) {
+   			return EAST;
+   		}
+   		if (start.x > dest.x) {
+   			return WEST;
+   		}
+   		if (start.y < dest.y) {
+   			return SOUTH;
+   		}
+   		if (start.y > dest.y) {
+   			return NORTH;
+   		}
+   		return -1; //if shit hits the fan, this happens
    	}
    
    	
@@ -137,6 +160,7 @@ public class Agent {
     final static int SOUTH  = 3;     
     static AgentMap agentMap = new AgentMap();
     boolean have_gold = false;
-    int num_stones_held = 0;      
+    int num_stones_held = 0;
+    CoordinateSequence pathToGoal = null;
    
 }
