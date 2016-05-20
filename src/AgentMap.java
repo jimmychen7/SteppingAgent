@@ -6,7 +6,7 @@ public class AgentMap {
 		agentMap = new AgentElement[159][159];
 		for(int i = 0; i < 159; i++) 
 			for(int j = 0; j < 159; j++)
-				agentMap[j][i] = new AgentElement("u"); // u = unknown, haven't seen it yet
+				agentMap[j][i] = new AgentElement("."); //. = unknown, haven't seen it yet
 
 				currPosition = new Coordinate(79,79); //start Position is (79.79)
 				dirn = NORTH;
@@ -40,6 +40,17 @@ public class AgentMap {
 		updateTools();
 	}
 	
+	/**
+	 * Update with no parameter called at the start of the program when Agent is first placed on the map
+	 */
+	public void update() {
+	    int xCurrPos = currPosition.x;
+        int yCurrPos = currPosition.y;
+        
+        updateReachable(xCurrPos, yCurrPos);
+        updateVisited(xCurrPos, yCurrPos);
+	}
+	
 	boolean withinMap(int x, int y) {
 		if(x >=0 && x < 160 && y >= 0 && y < 160) return true;
 		return false;
@@ -48,10 +59,10 @@ public class AgentMap {
 	private void updateReachable(int x, int y) {
 		//set currNode and neigbours as reachable = true.
 		agentMap[y][x].setReachable(true);
-		if(withinMap(y-1, x)) agentMap[y][x].setReachable(true);
-		if(withinMap(y+1, x)) agentMap[y][x].setReachable(true);
-		if(withinMap(y, x+1)) agentMap[y][x].setReachable(true);
-		if(withinMap(y, x-1)) agentMap[y][x].setReachable(true);
+		if(withinMap(y-1, x)) agentMap[y-1][x].setReachable(true);
+		if(withinMap(y+1, x)) agentMap[y+1][x].setReachable(true);
+		if(withinMap(y, x+1)) agentMap[y][x-1].setReachable(true);
+		if(withinMap(y, x-1)) agentMap[y][x+1].setReachable(true);
 	}
 	private void updateVisited(int x, int y) {
 		//set currNode to visited = true.
@@ -198,7 +209,15 @@ public class AgentMap {
 		//Else visit unvisited and reachable nodes
 		for(int y = 0; y < agentMap.length; y++) {
 			for(int x = 0; x < agentMap[y].length; x++) {
-				if(!agentMap[y][x].getIsVisited() && agentMap[y][x].isReachable()) {
+			    /*
+			    if (agentMap[y][x].getIsVisited() || agentMap[y][x].isReachable()) {
+			        System.out.println("visited: " + agentMap[y][x].getIsVisited() + " reachable: " +
+	                        agentMap[y][x].isReachable());
+			        System.out.println("x: " + x + " y: " + y);
+			    }
+			    */ //DEBUG
+				if(!agentMap[y][x].getIsVisited() && agentMap[y][x].isReachable() &&
+				        !agentMap[y][x].isObstacle()) {
 					return new Coordinate(x,y);
 				}
 			}
