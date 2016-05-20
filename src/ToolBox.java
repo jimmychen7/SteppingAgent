@@ -1,12 +1,12 @@
 
-public class Tools {
+public class ToolBox {
 	
 	public boolean hasAxe;
 	public boolean hasKey;
 	public boolean hasGold;
 	public int numSteppingStones;
 	
-	public Tools() {
+	public ToolBox() {
 		this.hasAxe = false;
 		this.hasKey = false;
 		this.hasGold = false;
