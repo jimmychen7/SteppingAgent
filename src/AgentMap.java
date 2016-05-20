@@ -3,13 +3,14 @@ import java.util.LinkedList;
 
 public class AgentMap {
 	
+	
 	public AgentMap() {
-		agentMap = new AgentElement[159][159];
-		for(int i = 0; i < 159; i++) 
-			for(int j = 0; j < 159; j++)
-				agentMap[j][i] = new AgentElement("u"); // u = unknown, haven't seen it yet
+		agentMap = new AgentElement[MAPSIZE][MAPSIZE];
+		for(int i = 0; i < agentMap.length; i++) 
+			for(int j = 0; j < agentMap[i].length; j++)
+				agentMap[j][i] = new AgentElement("."); // . = unknown, haven't seen it yet
 
-				currPosition = new Coordinate(79,79); //start Position is (79.79)
+				currPosition = new Coordinate(79,79); //start Position is (79,79)
 				dirn = NORTH;
 	}
 	
@@ -192,39 +193,63 @@ public class AgentMap {
 		int i,j;
 		
 		for (i = 0; i < agentMap.length; i++) {
-			for(j = 0; j < agentMap[i].length; j++) {
-				
-				name = agentMap[i][j].getSymbol();
-				
-				switch(name) {
-                case "u": System.out.print("u"); break;
-                case " ": System.out.print(" "); break;
-                case "T": System.out.print("T"); break;
-                case "-": System.out.print("-"); break;
-                case "~": System.out.print("~"); break;
-                case "*": System.out.print("*"); break;
-                case "a": System.out.print("a"); break;
-                case "k": System.out.print("k"); break;
-                case "o": System.out.print("o"); break;
-                case "O": System.out.print("O"); break;
-                case "g": System.out.print("g"); break;
-                default: System.out.print(".");
-               }
-               
-			}
-			System.out.println();	
+            name = "";
+            boolean printLine = false;
+            for(j = 0; j < agentMap[i].length; j++) {
+            	String add = "";
+            	
+            
+                switch(agentMap[i][j].getSymbol()) {
+                    case ".":
+                    case " ":
+                    case "T":
+                    case "-":
+                    case "~":
+                    case "*":
+                    case "a":
+                    case "k":
+                    case "o":
+                    case "O":
+                    case "g":
+                        add = agentMap[i][j].getSymbol();
+                        break;
+                    default: 
+                        System.out.print("?");
+                        break;
+                }
+                
+                if (!add.equals(".")) {
+                    printLine = true; //only print this line if there is anything except unknown char
+                }
+                if (currPosition.x == j && currPosition.y == i) {
+                    add = "%"; //if this position is player position, add player marker
+                }
+                name = name + add;
+                	
+    		}
+    		if (printLine) {
+    			System.out.println(name);	
+    		}
 		}
 			
 	}
+	public int getDirection() {
+		return dirn;
+	}  
 	public AgentElement[][] getAgentElements() {
 		return agentMap;
 	}
     	
 	private AgentElement[][] agentMap;
 	private Coordinate currPosition;
-	int dirn;
+	int dirn; //player direction
 	final static int EAST   = 0;
     final static int NORTH  = 1;
     final static int WEST   = 2;
-    final static int SOUTH  = 3;  
+    final static int SOUTH  = 3;
+    final static int MAPSIZE = 159; 
+	//Set to 159 so that the map will never run out of space, 
+	//regardless of whether the Agent is in the middle of an 
+	//80x80 area or on the corner of it.
+	
 }
