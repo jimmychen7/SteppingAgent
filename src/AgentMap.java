@@ -1,4 +1,4 @@
-
+import java.util.LinkedList;
 
 public class AgentMap {
 	
@@ -22,6 +22,9 @@ public class AgentMap {
 		int xCurrPos = currPosition.x;
 		int yCurrPos = currPosition.y;
 		
+		updateReachable(xCurrPos, yCurrPos);
+		updateVisited(xCurrPos, yCurrPos);
+		
 		if(ch == 'F' || ch == 'f' && canGoForward(tools.getNumSteppingStones())) {
 			switch ( dirn ) {
     			case NORTH: yCurrPos--; break;
@@ -32,7 +35,27 @@ public class AgentMap {
 		}
 
 		this.currPosition = new Coordinate(xCurrPos, yCurrPos);
+		updateReachable(xCurrPos, yCurrPos);
+		updateVisited(xCurrPos, yCurrPos);
 		updateTools();
+	}
+	
+	boolean withinMap(int x, int y) {
+		if(x >=0 && x < 160 && y >= 0 && y < 160) return true;
+		return false;
+	}
+	
+	private void updateReachable(int x, int y) {
+		//set currNode and neigbours as reachable = true.
+		agentMap[y][x].setReachable(true);
+		if(withinMap(y-1, x)) agentMap[y][x].setReachable(true);
+		if(withinMap(y+1, x)) agentMap[y][x].setReachable(true);
+		if(withinMap(y, x+1)) agentMap[y][x].setReachable(true);
+		if(withinMap(y, x-1)) agentMap[y][x].setReachable(true);
+	}
+	private void updateVisited(int x, int y) {
+		//set currNode to visited = true.
+		agentMap[y][x].setVisited(true);
 	}
 	
 	private void updateTools() {
@@ -46,13 +69,145 @@ public class AgentMap {
 			tools.setNumSteppingStones(tools.getNumSteppingStones()+1);
 		} else if (currElement.isGold()) {
 			tools.setHasGold(true);
-		}
-		
-		
+		}		
 	}
 	
 	public Coordinate getCurrPosition() {
 		return this.currPosition;
+	}
+	
+	ToolBox getTools() {
+		return this.tools;
+	}
+	
+	public Coordinate getNodeToVisit() {
+		//Gold
+		Coordinate goldPos = null;
+		Coordinate axePos = null;
+		Coordinate keyPos = null;
+		//LinkedList<Coordinate> stonePos = new LinkedList<Coordinate>();
+		Coordinate stonePos = null;
+		LinkedList<Coordinate> treePos = new LinkedList<Coordinate>();
+		LinkedList<Coordinate> doorPos = new LinkedList<Coordinate>();
+		
+		Landmark goal = null;
+		boolean reachableLandmark = false;
+		
+		//If item of interest is reachable go to it
+		for(int y = 0; y < agentMap.length; y++) {
+			for(int x = 0; x < agentMap[y].length; x++) {
+				if(agentMap[y][x].isReachable()) {
+					if (agentMap[y][x].isGold()) {
+						goldPos = new Coordinate(x, y);
+						reachableLandmark = true;
+						goal = Landmark.GOLD;
+					} else if (agentMap[y][x].isAxe()) {
+						reachableLandmark = true;
+						axePos = new Coordinate (x, y);
+						goal = Landmark.AXE;
+					} else if (agentMap[y][x].isKey()) {
+						reachableLandmark = true;
+						keyPos = new Coordinate (x, y);
+						goal = Landmark.KEY;
+					} else if (agentMap[y][x].isStone()) {
+						reachableLandmark = true;
+						//stonePos.add(new Coordinate(x, y));
+						stonePos = new Coordinate (x, y);
+						goal = Landmark.STONE;
+					} else if (agentMap[y][x].isTree()) {
+						reachableLandmark = true;
+						treePos.add(new Coordinate(x, y));
+					} else if (agentMap[y][x].isDoor()) {
+						reachableLandmark = true;
+						doorPos.add(new Coordinate(x, y));
+					}
+				}
+			}
+		}
+		
+		if (reachableLandmark) {
+			if (goal == Landmark.GOLD) {
+				return goldPos;
+			}
+			if (goal == Landmark.AXE) {
+				return axePos;
+			}
+			if (goal == Landmark.KEY) {
+				return keyPos;
+			}
+			if (goal == Landmark.STONE) {
+				//Get closest stone and return it
+				/*Coordinate closestStonePos;
+				int closestStoneDist;
+				
+				closestStonePos = stonePos.getFirst();
+				Heuristic h = new ManhattanDistanceHeuristic();
+				closestStoneDist = h.getHeuristic(currPosition, closestStonePos);
+				
+				for (Coordinate compare : stonePos) {
+					int compareStoneDist = h.getHeuristic(currPosition, compare);
+					if (compareStoneDist < closestStoneDist) {
+						closestStonePos = compare;
+					}
+				}
+				
+				return closestStonePos;*/
+				return stonePos;
+			}
+			
+			//If we get here, we're going to deal with reachable landmarks that are obstacles
+			//We only set our goal to the obstacles if we have the tools to eliminate it
+			
+			if (tools.isHasAxe()) {
+				Coordinate closestTreePos;
+				int closestTreeDist;
+				
+				closestTreePos = treePos.getFirst();
+				Heuristic h = new ManhattanDistanceHeuristic();
+				closestTreeDist = h.getHeuristic(currPosition, closestTreePos);
+				
+				for (Coordinate compare : treePos) {
+					int compareStoneDist = h.getHeuristic(currPosition, compare);
+					if (compareStoneDist < closestTreeDist) {
+						closestTreePos = compare;
+					}
+				}
+				
+				return closestTreePos;
+			} 
+			if(tools.isHasKey()) {
+				Coordinate closestDoorPos;
+				int closestDoorDist;
+				
+				closestDoorPos = doorPos.getFirst();
+				Heuristic h = new ManhattanDistanceHeuristic();
+				closestDoorDist = h.getHeuristic(currPosition, closestDoorPos);
+				
+				for (Coordinate compare : treePos) {
+					int compareStoneDist = h.getHeuristic(currPosition, compare);
+					if (compareStoneDist < closestDoorDist) {
+						closestDoorPos = compare;
+					}
+				}
+				
+				return closestDoorPos;
+			}
+			
+		}
+		
+		//Else visit unvisited and reachable nodes
+		for(int y = 0; y < agentMap.length; y++) {
+			for(int x = 0; x < agentMap[y].length; x++) {
+				if(!agentMap[y][x].getIsVisited() && agentMap[y][x].isReachable()) {
+					return new Coordinate(x,y);
+				}
+			}
+		}		
+		
+		//Else make decision 
+		
+		
+		return null;
 	}
 	
 	public void updateMap(char[][] view) {
@@ -151,7 +306,7 @@ public class AgentMap {
 		}
 		
 		if(agentMap[yPos][xPos].isPath()) return true;
-		if(agentMap[yPos][xPos].isWater() /*&& num_stones_held > 0*/) return true;
+		if(agentMap[yPos][xPos].isWater() /*&& num_stones_held > 0*/) return false; //TO DO
 		if(agentMap[yPos][xPos].isAxe() || agentMap[yPos][xPos].isGold() || agentMap[yPos][xPos].isKey()) return true;
 		if(agentMap[yPos][xPos].isPlacedStone()) return true;
 		return false;
@@ -206,6 +361,8 @@ public class AgentMap {
 	public AgentElement[][] getAgentElements() {
 		return agentMap;
 	}
+	
+	
     	
 	private AgentElement[][] agentMap;
 	private Coordinate currPosition;
@@ -215,4 +372,6 @@ public class AgentMap {
     final static int NORTH  = 1;
     final static int WEST   = 2;
     final static int SOUTH  = 3;  
+    
+    
 }

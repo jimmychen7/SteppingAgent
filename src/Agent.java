@@ -17,8 +17,15 @@ public class Agent {
 	   Coordinate goal = new Coordinate(-1, -1);
 	   
 	   //Find goal(Coordinate) to go to.
-
-	   // get command to use to get goal
+	   if(agentMap.getTools().isHasGold()) {
+		   //have gold, go to start.
+		   goal = new Coordinate(79, 79);
+	   } else {
+		   //find a coordinate to go to.
+		   goal = agentMap.getNodeToVisit();
+	   }
+	   
+	   // get character to use to get to goal
 	   if(goal.equals(coordSeqToGoal.getGoal())) {
 		   //path was already found previously
 		   ch = getCommand(coordSeqToGoal.getPath());
@@ -167,7 +174,13 @@ public class Agent {
 				
 				relativeDirection = direction - playerOrientation;
 			}
+			if(agentMap.getAgentElements()[after.y][after.x].isTree() && agentMap.getTools().isHasAxe()) {
+				commandList.add('c');
+			} else if(agentMap.getAgentElements()[after.y][after.x].isDoor() && agentMap.getTools().isHasKey()) {
+				commandList.add('u');
+			}
 			commandList.add('f');
+			
    		}
    		
    		return commandList.get(0);

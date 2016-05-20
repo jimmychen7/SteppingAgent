@@ -5,8 +5,8 @@ public class CoordinateSequence {
 	private ArrayList<Coordinate> path;
 	
 	public CoordinateSequence (Coordinate goal, ArrayList<Coordinate> path) {
-		this.setGoal(goal);
-		this.setPath(path);
+		this.goal = goal;
+		this.path = path;
 	}
 
 	public Coordinate getGoal() {
