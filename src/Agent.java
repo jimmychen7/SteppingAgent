@@ -126,12 +126,42 @@ public class Agent {
 	   }
    	}
    
-   	private void getPath (Coordinate destination) {
+   	private List<Character> getPath (Coordinate destination) {
    		
    		AStarSearch search = new AStarSearch();
    		List<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
    				destination, agentMap);
    		
+   		Coordinate[] coordinatePathArray = coordinatePath.toArray(
+   				new Coordinate[coordinatePath.size()]);
+   		
+   		if (coordinatePathArray.length < 2) {
+   			return null;
+   		}
+   		
+   		List<Character> commandList = new LinkedList<Character>();
+   		int playerOrientation = agentMap.getOrientation();
+   		for (int i = 1; i < coordinatePathArray.length; i++) {
+   			Coordinate before = coordinatePathArray[i - 1];
+   			Coordinate after  = coordinatePathArray[i];
+   			
+   			//Figure out how to get from before to after
+   			int direction = getDirection (before, after);
+   			int relativeDirection = direction - playerOrientation;
+   			
+			while (relativeDirection != 0) { //realign player while not oriented correctly
+				playerOrientation++;
+				commandList.add('l');
+				if (playerOrientation > SOUTH) {
+					playerOrientation -= 4;
+				}
+				
+				relativeDirection = direction - playerOrientation;
+			}
+			commandList.add('f');
+   		}
+   		
+   		return commandList;
    	}
    	
    	private char getCommand( Coordinate start, Coordinate dest) {
@@ -141,15 +171,16 @@ public class Agent {
    		if (start.x < dest.x) {
    			return EAST;
    		}
+   		if (start.y > dest.y) {
+   			return NORTH;
+   		}
    		if (start.x > dest.x) {
    			return WEST;
    		}
    		if (start.y < dest.y) {
    			return SOUTH;
    		}
-   		if (start.y > dest.y) {
-   			return NORTH;
-   		}
+   		
    		return -1; //if shit hits the fan, this happens
    	}
    

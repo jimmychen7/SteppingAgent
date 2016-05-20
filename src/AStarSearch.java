@@ -92,6 +92,6 @@ public class AStarSearch {
 			}
 			
 		}
-		return null;
+		return futureStates;
 	}
 }
