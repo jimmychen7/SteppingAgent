@@ -140,7 +140,7 @@ public class Agent {
    		}
    		
    		List<Character> commandList = new LinkedList<Character>();
-   		int playerOrientation = agentMap.getOrientation();
+   		int playerOrientation = agentMap.getDirection();
    		for (int i = 1; i < coordinatePathArray.length; i++) {
    			Coordinate before = coordinatePathArray[i - 1];
    			Coordinate after  = coordinatePathArray[i];
@@ -163,10 +163,11 @@ public class Agent {
    		
    		return commandList;
    	}
-   	
+   	/*
    	private char getCommand( Coordinate start, Coordinate dest) {
    		
    	}
+   	*/
    	private int getDirection (Coordinate start, Coordinate dest) {
    		if (start.x < dest.x) {
    			return EAST;
