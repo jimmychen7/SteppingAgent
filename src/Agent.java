@@ -14,33 +14,38 @@ public class Agent {
 
      public char get_action( char view[][] ) { 
 	   int ch=0;
+	   Coordinate goal = new Coordinate(-1, -1);
+	   
+	   //Find goal(Coordinate) to go to.
+	   
+	   
+	   
+	   
 
-	      System.out.print("Enter Action(s): ");
-
-	      try {
-	         while ( ch != -1 ) {
-	            // read character from keyboard
-	            ch  = System.in.read();
-
-	            switch( ch ) { // if character is a valid action, return it
-	            case 'F': case 'f':
-	            	if(agentMap.canGoForward(num_stones_held)) {
-	            		agentMap.updateCurrPosition((char)ch);
-	            	}	            	
-	            case 'L': case 'R':
-	            case 'l': case 'r':
-	            	agentMap.updateDirection((char)ch);	            	
-	            case 'C': case 'U':
-	            case 'c': case 'u':    	
-	            	return((char) ch );             
-	            }
-	         }
-	      }
-	      catch (IOException e) {
-	         System.out.println ("IO error:" + e );
-	      }
-
-	      return 0;     
+	   // get command to use to get goal
+	   if(goal.equals(coordSeqToGoal.getGoal())) {
+		   //path was already found previously
+		   ch = getCommand(coordSeqToGoal.getPath());
+	   } else {
+		   //make new coordSeq to goal.
+		   ch = getCommand(getPath(goal));
+	   }
+	   
+	   switch( ch ) { // if character is a valid action update our agentMap accordingly.
+       case 'F': case 'f':
+	   //move currPosition forward in agentMap if possible and check if a tool has been picked up.
+	   agentMap.update((char)ch);            	
+       case 'L': case 'R':
+       case 'l': case 'r':
+	   //update the direction in agentMap.
+       	agentMap.updateDirection((char)ch);	            	
+       case 'C': case 'U':
+       case 'c': case 'u':
+	   //Chop tree/ Unlock gate
+       
+	   }
+	   
+	   return((char) ch);
     }
 
     void print_view( char view[][] ) {
@@ -72,6 +77,7 @@ public class Agent {
 	   int port;
 	   int ch;
 	   int i,j;
+	   coordSeqToGoal = new CoordinateSequence(new Coordinate(-1,-1), null); //No goal and coordSeq defined
       
 
 	   if( args.length < 2 ) {
@@ -126,17 +132,24 @@ public class Agent {
 	   }
    	}
    
-   	private List<Character> getPath (Coordinate destination) {
+   	private List<Coordinate> getPath(Coordinate destination) {
    		
    		AStarSearch search = new AStarSearch();
    		List<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
    				destination, agentMap);
    		
-   		Coordinate[] coordinatePathArray = coordinatePath.toArray(
-   				new Coordinate[coordinatePath.size()]);
+   		coordSeqToGoal = new CoordinateSequence(destination, (ArrayList<Coordinate>) coordinatePath);
+   		return coordinatePath;
+   		
+   		
+   	}
+   	
+   	private char getCommand(List<Coordinate> list) {
+   		Coordinate[] coordinatePathArray = list.toArray(
+   				new Coordinate[list.size()]);
    		
    		if (coordinatePathArray.length < 2) {
-   			return null;
+   			return 'e'; //error
    		}
    		
    		List<Character> commandList = new LinkedList<Character>();
@@ -161,13 +174,9 @@ public class Agent {
 			commandList.add('f');
    		}
    		
-   		return commandList;
+   		return commandList.get(0);
    	}
-   	/*
-   	private char getCommand( Coordinate start, Coordinate dest) {
-   		
-   	}
-   	*/
+   	
    	private int getDirection (Coordinate start, Coordinate dest) {
    		if (start.x < dest.x) {
    			return EAST;
@@ -193,6 +202,6 @@ public class Agent {
     static AgentMap agentMap = new AgentMap();
     boolean have_gold = false;
     int num_stones_held = 0;
-    CoordinateSequence pathToGoal = null;
+    static CoordinateSequence coordSeqToGoal;
    
 }
