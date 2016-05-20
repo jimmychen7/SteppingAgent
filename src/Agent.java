@@ -25,6 +25,13 @@ public class Agent {
 		   goal = agentMap.getNodeToVisit();
 	   }
 	   
+	   //debug
+	   if (goal == null) {
+	       System.out.println("NULL!");
+	   } else {
+	       System.out.println("NOT NULL!");
+	   }
+	   
 	   // get character to use to get to goal
 	   if(goal.equals(coordSeqToGoal.getGoal())) {
 		   //path was already found previously
@@ -80,7 +87,7 @@ public class Agent {
 	   int port;
 	   int ch;
 	   int i,j;
-	   coordSeqToGoal = new CoordinateSequence(new Coordinate(-1,-1), null); //No goal and coordSeq defined
+	   coordSeqToGoal = new CoordinateSequence(new Coordinate(79,79), new ArrayList<Coordinate>()); //No goal and coordSeq defined
       
 
 	   if( args.length < 2 ) {
@@ -117,6 +124,7 @@ public class Agent {
 		   agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
             
 		   agentMap.updateMap(view);
+		   agentMap.update();
 		   agentMap.print();
             
 		   action = agent.get_action( view );
@@ -138,10 +146,10 @@ public class Agent {
    	private List<Coordinate> getPath(Coordinate destination) {
    		
    		AStarSearch search = new AStarSearch();
-   		List<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
+   		ArrayList<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
    				destination, agentMap);
    		
-   		coordSeqToGoal = new CoordinateSequence(destination, (ArrayList<Coordinate>) coordinatePath);
+   		coordSeqToGoal = new CoordinateSequence(destination, coordinatePath);
    		return coordinatePath;
    		
    		
@@ -150,8 +158,12 @@ public class Agent {
    	private char getCommand(List<Coordinate> list) {
    		Coordinate[] coordinatePathArray = list.toArray(
    				new Coordinate[list.size()]);
-   		
+   		System.out.println("Coordinate sequence: ");
+   		for (Coordinate c : coordinatePathArray) {
+   		    c.print();
+   		}
    		if (coordinatePathArray.length < 2) {
+   		    
    			return 'e'; //error
    		}
    		

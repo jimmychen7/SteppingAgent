@@ -8,8 +8,14 @@ public class AStarSearch {
 	Heuristic h = new StraightLineDistanceHeuristic();
 	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());
 	
-	public List<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
-		LinkedList<Coordinate> path = new LinkedList<Coordinate>();
+	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
+	    System.out.print("Search start: ");
+        start.print();
+
+	    System.out.print("Search destination: ");
+	    dest.print();
+
+		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
 		
 		if (start.equals(dest)) {
 			return path;
@@ -41,13 +47,14 @@ public class AStarSearch {
 				}
 			}
 		}
-		
+		System.out.print("curState = ");
+		curState.getLocation().print();
 		//create path from state
 		while (curState != null) {
-			path.addFirst(curState.getLocation());
+			path.add(0, curState.getLocation());
 			curState = curState.getPreviousState();
 		}
-		System.out.print("Path to goal: ");
+		System.out.println("Path to goal: ");
 		for (Coordinate c : path) {
 			System.out.print ("(" + c.x + ", " + c.y + "); ");
 		}
