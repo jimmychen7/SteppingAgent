@@ -6,7 +6,7 @@ public class AgentMap {
 		agentMap = new AgentElement[159][159];
 		for(int i = 0; i < 159; i++) 
 			for(int j = 0; j < 159; j++)
-				agentMap[j][i] = new AgentElement("u"); // u = unknown, haven't seen it yet
+				agentMap[j][i] = new AgentElement("."); // u = unknown, haven't seen it yet
 
 				currPosition = new Coordinate(79,79); //start Position is (79.79)
 				dirn = NORTH;
