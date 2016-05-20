@@ -24,10 +24,10 @@ public class AgentMap {
 		
 		if(ch == 'F' || ch == 'f' && canGoForward(tools.getNumSteppingStones())) {
 			switch ( dirn ) {
-			case NORTH: yCurrPos--; break;
-			case SOUTH: yCurrPos++; break;
-			case EAST: xCurrPos++; break;
-			case WEST: xCurrPos--; break;
+    			case NORTH: yCurrPos--; break;
+    			case SOUTH: yCurrPos++; break;
+    			case EAST: xCurrPos++; break;
+    			case WEST: xCurrPos--; break;
 			}
 		}
 
@@ -159,34 +159,50 @@ public class AgentMap {
 	
 	
 	public void print() {
-		String name;
-		int i,j;
-		
-		for (i = 0; i < agentMap.length; i++) {
-			for(j = 0; j < agentMap[i].length; j++) {
-				
-				name = agentMap[i][j].getSymbol();
-				
-				switch(name) {
-                case "u": System.out.print("u"); break;
-                case " ": System.out.print(" "); break;
-                case "T": System.out.print("T"); break;
-                case "-": System.out.print("-"); break;
-                case "~": System.out.print("~"); break;
-                case "*": System.out.print("*"); break;
-                case "a": System.out.print("a"); break;
-                case "k": System.out.print("k"); break;
-                case "o": System.out.print("o"); break;
-                case "O": System.out.print("O"); break;
-                case "g": System.out.print("g"); break;
-                default: System.out.print(".");
-               }
-               
-			}
-			System.out.println();	
-		}
-			
-	}
+        String name;
+        int i,j;
+        
+        for (i = 0; i < agentMap.length; i++) {
+            name = "";
+            boolean printLine = false;
+            for(j = 0; j < agentMap[i].length; j++) {
+                String add = "";
+                
+            
+                switch(agentMap[i][j].getSymbol()) {
+                    case ".":
+                    case " ":
+                    case "T":
+                    case "-":
+                    case "~":
+                    case "*":
+                    case "a":
+                    case "k":
+                    case "o":
+                    case "O":
+                    case "g":
+                        add = agentMap[i][j].getSymbol();
+                        break;
+                    default: 
+                        System.out.print("?");
+                        break;
+                }
+                
+                if (!add.equals(".")) {
+                    printLine = true; //only print this line if there is anything except unknown char
+                }
+                if (currPosition.x == j && currPosition.y == i) {
+                    add = "%"; //if this position is player position, add player marker
+                }
+                name = name + add;
+                    
+            }
+            if (printLine) {
+                System.out.println(name);   
+            }
+        }
+            
+    }
 	public AgentElement[][] getAgentElements() {
 		return agentMap;
 	}

@@ -17,10 +17,6 @@ public class Agent {
 	   Coordinate goal = new Coordinate(-1, -1);
 	   
 	   //Find goal(Coordinate) to go to.
-	   
-	   
-	   
-	   
 
 	   // get command to use to get goal
 	   if(goal.equals(coordSeqToGoal.getGoal())) {
