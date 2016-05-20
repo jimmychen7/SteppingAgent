@@ -14,4 +14,8 @@ public class Coordinate {
 	public void print() {
 	    System.out.println("(" + x + "," + y + ")");
 	}
+	public Coordinate clone() {
+	    Coordinate c = new Coordinate(this.x, this.y);
+	    return c;
+	}
 }

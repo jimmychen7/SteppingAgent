@@ -218,6 +218,7 @@ public class AgentMap {
 			    */ //DEBUG
 				if(!agentMap[y][x].getIsVisited() && agentMap[y][x].isReachable() &&
 				        !agentMap[y][x].isObstacle()) {
+				    System.out.println("Node to visit = x: " + x + " y: " + y);
 					return new Coordinate(x,y);
 				}
 			}

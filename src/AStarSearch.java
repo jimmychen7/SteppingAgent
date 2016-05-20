@@ -3,6 +3,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class AStarSearch {
 	Heuristic h = new StraightLineDistanceHeuristic();
@@ -49,10 +50,14 @@ public class AStarSearch {
 		}
 		System.out.print("curState = ");
 		curState.getLocation().print();
+		Stack<Coordinate> s = new Stack<Coordinate>();
 		//create path from state
 		while (curState != null) {
-			path.add(0, curState.getLocation());
+			s.push(curState.getLocation());
 			curState = curState.getPreviousState();
+		}
+		while (!s.isEmpty()) {
+		    path.add(s.pop());
 		}
 		System.out.println("Path to goal: ");
 		for (Coordinate c : path) {
@@ -66,13 +71,13 @@ public class AStarSearch {
 		//Get coordinates
 		Coordinate curLocation = curState.getLocation();
 		
-		Coordinate northCoord = curLocation;
+		Coordinate northCoord = curLocation.clone();
 		northCoord.y--;
-		Coordinate southCoord = curLocation;
+		Coordinate southCoord = curLocation.clone();
 		southCoord.y++;
-		Coordinate eastCoord = curLocation;
+		Coordinate eastCoord = curLocation.clone();
 		eastCoord.x++;
-		Coordinate westCoord = curLocation;
+		Coordinate westCoord = curLocation.clone();
 		westCoord.x--;
 		
 		State northState = new State (h.getHeuristic(northCoord, dest), 

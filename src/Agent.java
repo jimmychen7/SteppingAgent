@@ -1,4 +1,6 @@
-/*********************************************
+
+/*
+ *
  *  Agent.java 
  *  Agent for Text-Based Adventure Game
  *  COMP3411 Artificial Intelligence
@@ -35,9 +37,11 @@ public class Agent {
 	   // get character to use to get to goal
 	   if(goal.equals(coordSeqToGoal.getGoal())) {
 		   //path was already found previously
-		   ch = getCommand(coordSeqToGoal.getPath());
+	       System.out.println("Going to previous Goal");
+		   ch = getCommandRepeatedSeq(coordSeqToGoal.getPath());
 	   } else {
 		   //make new coordSeq to goal.
+	       System.out.println("Going to new Goal");
 		   ch = getCommand(getPath(goal));
 	   }
 	   
@@ -54,7 +58,8 @@ public class Agent {
 	   //Chop tree/ Unlock gate
        
 	   }
-	   
+	   System.out.println("Current location = x: " + agentMap.getCurrPosition().x + 
+	           " y:" + agentMap.getCurrPosition().y);
 	   return((char) ch);
     }
 
@@ -158,7 +163,7 @@ public class Agent {
    	private char getCommand(List<Coordinate> list) {
    		Coordinate[] coordinatePathArray = list.toArray(
    				new Coordinate[list.size()]);
-   		System.out.println("Coordinate sequence: ");
+   		System.out.println("\nCoordinate sequence: ");
    		for (Coordinate c : coordinatePathArray) {
    		    c.print();
    		}
@@ -196,6 +201,54 @@ public class Agent {
    		}
    		
    		return commandList.get(0);
+   	}
+   	
+   	public char getCommandRepeatedSeq(List<Coordinate> list) {
+   	 Coordinate[] coordinatePathArray = list.toArray(
+             new Coordinate[list.size()]);
+     
+   	 List<Character> commandList = new LinkedList<Character>();
+     int playerOrientation = agentMap.getDirection();
+     int j = 1;
+     
+     if(coordinatePathArray.length > 2) {
+         for(j = 0; j < coordinatePathArray.length; j++) {
+             if(coordinatePathArray[j].equals(agentMap.getCurrPosition()));
+         }
+     }
+     
+     
+     
+     
+     for (int i = j; i < coordinatePathArray.length; i++) {
+         Coordinate before = coordinatePathArray[i - 1];
+         Coordinate after  = coordinatePathArray[i];
+         
+         //Figure out how to get from before to after
+         int direction = getDirection (before, after);
+         int relativeDirection = direction - playerOrientation;
+         
+         while (relativeDirection != 0) { //realign player while not oriented correctly
+             playerOrientation++;
+             commandList.add('l');
+             if (playerOrientation > SOUTH) {
+                 playerOrientation -= 4;
+             }
+             
+             relativeDirection = direction - playerOrientation;
+         }
+         if(agentMap.getAgentElements()[after.y][after.x].isTree() && agentMap.getTools().isHasAxe()) {
+             commandList.add('c');
+         } else if(agentMap.getAgentElements()[after.y][after.x].isDoor() && agentMap.getTools().isHasKey()) {
+             commandList.add('u');
+         }
+         commandList.add('f');
+         
+     }
+     
+     return commandList.get(0);
+   	 
+   	
    	}
    	
    	private int getDirection (Coordinate start, Coordinate dest) {
