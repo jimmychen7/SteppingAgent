@@ -51,7 +51,7 @@ public class AStarSearch {
 			for (State futureState : futureStates) {
 				int x = futureState.getLocation().x;
 				int y = futureState.getLocation().y;
-				System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
+				//System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
 				if (!elements[y][x].isObstacle()) {
 					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
 					queue.add(futureState);
@@ -62,6 +62,7 @@ public class AStarSearch {
 		System.out.print("curState = ");
 		curState.getLocation().print();
 		Stack<Coordinate> s = new Stack<Coordinate>();
+		
 		//create path from state
 		while (curState != null) {
 			s.push(curState.getLocation());
@@ -70,6 +71,7 @@ public class AStarSearch {
 		while (!s.isEmpty()) {
 		    path.add(s.pop());
 		}
+		
 		System.out.println("Path to goal: ");
 		for (Coordinate c : path) {
 			System.out.print ("(" + c.x + ", " + c.y + "); ");
@@ -87,15 +89,6 @@ public class AStarSearch {
 		Coordinate eastCoord = new Coordinate(curLocation.x+1,curLocation.y);
 		Coordinate westCoord = new Coordinate(curLocation.x-1,curLocation.y);
 		
-		/*Coordinate northCoord = curLocation.clone();
-		northCoord.y--;
-		Coordinate southCoord = curLocation.clone();
-		southCoord.y++;
-		Coordinate eastCoord = curLocation.clone();
-		eastCoord.x++;
-		Coordinate westCoord = curLocation.clone();
-		westCoord.x--;*/
-		
 		State northState = new State (curState.getCost()+1, h.getHeuristic(northCoord, dest), 
 				curState, northCoord);
 		State southState = new State (curState.getCost()+1, h.getHeuristic(southCoord, dest), 
@@ -105,21 +98,31 @@ public class AStarSearch {
 		State westState = new State (curState.getCost()+1, h.getHeuristic(westCoord, dest), 
 				curState, westCoord);
 		
+		boolean northVisited = false;
+		boolean southVisited = false;
+		boolean eastVisited = false;
+		boolean westVisited = false;
+		
+		//checking if north was visited
 		for(Coordinate visitedNode : visitedNodes) {
-			if (!northState.getLocation().equals(visitedNode)) {
-				futureStates.add(northState);
-			}
-			if (!eastState.getLocation().equals(visitedNode)) {
-				futureStates.add(eastState);
-			}
-			if (!southState.getLocation().equals(visitedNode)) {
-				futureStates.add(southState);
-			}
-			if (!westState.getLocation().equals(visitedNode)) {
-				futureStates.add(westState);
-			}
+			if (northState.getLocation().equals(visitedNode))
+				northVisited = true;
 			
+			if (southState.getLocation().equals(visitedNode))
+				southVisited = true;
+			
+			if (eastState.getLocation().equals(visitedNode))
+				eastVisited = true;
+			
+			if (westState.getLocation().equals(visitedNode))
+				westVisited = true;
 		}
+		
+		if(!northVisited) futureStates.add(northState);
+		if(!southVisited) futureStates.add(southState);
+		if(!eastVisited) futureStates.add(eastState);	
+		if(!westVisited) futureStates.add(westState);	
+		
 		return futureStates;
 	}
 }
