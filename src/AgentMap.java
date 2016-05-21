@@ -180,35 +180,39 @@ public class AgentMap {
 				Coordinate closestTreePos;
 				int closestTreeDist;
 				
-				closestTreePos = treePos.getFirst();
-				Heuristic h = new ManhattanDistanceHeuristic();
-				closestTreeDist = h.getHeuristic(currPosition, closestTreePos);
-				
-				for (Coordinate compare : treePos) {
-					int compareStoneDist = h.getHeuristic(currPosition, compare);
-					if (compareStoneDist < closestTreeDist) {
-						closestTreePos = compare;
+				if(!treePos.isEmpty()) {
+					closestTreePos = treePos.getFirst();
+					Heuristic h = new ManhattanDistanceHeuristic();
+					closestTreeDist = h.getHeuristic(currPosition, closestTreePos);
+					
+					for (Coordinate compare : treePos) {
+						int compareStoneDist = h.getHeuristic(currPosition, compare);
+						if (compareStoneDist < closestTreeDist) {
+							closestTreePos = compare;
+						}
 					}
-				}
-				
-				return closestTreePos;
+					
+					return closestTreePos;
+				}				
 			} 
 			if(tools.isHasKey()) {
 				Coordinate closestDoorPos;
 				int closestDoorDist;
 				
-				closestDoorPos = doorPos.getFirst();
-				Heuristic h = new ManhattanDistanceHeuristic();
-				closestDoorDist = h.getHeuristic(currPosition, closestDoorPos);
-				
-				for (Coordinate compare : treePos) {
-					int compareStoneDist = h.getHeuristic(currPosition, compare);
-					if (compareStoneDist < closestDoorDist) {
-						closestDoorPos = compare;
+				if(!doorPos.isEmpty()) {
+					closestDoorPos = doorPos.getFirst();
+					Heuristic h = new ManhattanDistanceHeuristic();
+					closestDoorDist = h.getHeuristic(currPosition, closestDoorPos);
+					
+					for (Coordinate compare : treePos) {
+						int compareStoneDist = h.getHeuristic(currPosition, compare);
+						if (compareStoneDist < closestDoorDist) {
+							closestDoorPos = compare;
+						}
 					}
+					
+					return closestDoorPos;
 				}
-				
-				return closestDoorPos;
 			}
 			
 		}

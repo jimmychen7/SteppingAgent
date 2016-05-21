@@ -15,10 +15,6 @@ public class AStarSearch {
 
 	    System.out.print("Search destination: ");
 	    dest.print();
-	    
-	    if(!agentMap.getAgentElements()[dest.y][dest.x].isReachable()) {
-	    	System.out.println("GOAL NOT REACHABLE");
-	    }
 
 		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
 		
@@ -32,6 +28,7 @@ public class AStarSearch {
 		int startingHeuristic = h.getHeuristic(start, dest);
 		int startingCost = 0; //zero cost going from start to start;
 		State initialState = new State(startingHeuristic, null, start);
+		visitedNodes.add(initialState.getLocation().clone());
 		queue.add(initialState);
 		State curState = null;
 		
@@ -40,7 +37,7 @@ public class AStarSearch {
 			System.out.print("currState: ");
 			curState.getLocation().print();
 			
-			visitedNodes.add (curState.getLocation());
+			//visitedNodes.add (curState.getLocation());
 			
 			if (curState.getLocation().equals(dest)) {
 				break;
@@ -56,12 +53,15 @@ public class AStarSearch {
 					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
 					if(elements[y][x].isDoor() && agentMap.getTools().isHasKey()) {
 						queue.add(futureState);
+						visitedNodes.add (futureState.getLocation());
 					} else if (elements[y][x].isTree() && agentMap.getTools().isHasAxe()) {
 						queue.add(futureState);
+						visitedNodes.add (futureState.getLocation());
 					}
 						
 				} else {
 					queue.add(futureState);
+					visitedNodes.add (futureState.getLocation());
 				}
 			}
 			//System.out.println("\n\n");
