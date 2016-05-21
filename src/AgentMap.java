@@ -74,13 +74,16 @@ public class AgentMap {
 		
 		if(currElement.isAxe()) {
 			tools.setHasAxe(true);
+			currElement.setSymbol(" ");
 		} else if (currElement.isKey()) {
 			tools.setHasKey(true);
+			currElement.setSymbol(" ");
 		} else if (currElement.isStone()) {
 			tools.setNumSteppingStones(tools.getNumSteppingStones()+1);
+			currElement.setSymbol(" ");
 		} else if (currElement.isGold()) {
-			System.out.println("GOT GOLD#############");
 			tools.setHasGold(true);
+			currElement.setSymbol(" ");
 		}		
 	}
 	

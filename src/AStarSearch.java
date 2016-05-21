@@ -37,8 +37,8 @@ public class AStarSearch {
 		
 		while (!queue.isEmpty()) {
 			curState = queue.poll();
-			System.out.print("currState: ");
-			curState.getLocation().print();
+			//System.out.print("currState: ");
+			//curState.getLocation().print();
 			
 			visitedNodes.add (curState.getLocation());
 			
@@ -52,12 +52,19 @@ public class AStarSearch {
 				int x = futureState.getLocation().x;
 				int y = futureState.getLocation().y;
 				//System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
-				if (!elements[y][x].isObstacle()) {
+				if (elements[y][x].isObstacle()) {
 					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
+					if(elements[y][x].isDoor() && agentMap.getTools().isHasKey()) {
+						queue.add(futureState);
+					} else if (elements[y][x].isTree() && agentMap.getTools().isHasAxe()) {
+						queue.add(futureState);
+					}
+						
+				} else {
 					queue.add(futureState);
 				}
 			}
-			System.out.println("\n\n");
+			//System.out.println("\n\n");
 		}
 		System.out.print("curState = ");
 		curState.getLocation().print();
