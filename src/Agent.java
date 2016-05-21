@@ -161,9 +161,6 @@ public class Agent {
    	    if (commands.isEmpty()) {
    	        try {
    	            currentGoal = agentMap.getNodeToVisit();
-   	            if (agentMap.getTools().isHasGold()) {
-   	                currentGoal = new Coordinate(79, 79);
-   	            }
    	            getCommand (currentGoal);
    	        } catch (Exception e) {
    	            e.printStackTrace();

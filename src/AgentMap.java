@@ -92,6 +92,9 @@ public class AgentMap {
 	}
 	
 	public Coordinate getNodeToVisit() {
+	    if (getTools().isHasGold()) {
+	        return new Coordinate(79, 79); //set goal to home if agent possesses gold
+	    }
 		//Gold
 		Coordinate goldPos = null;
 		Coordinate axePos = null;
