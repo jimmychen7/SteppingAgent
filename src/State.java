@@ -1,12 +1,10 @@
 
 public class State {
 	private int heuristic;
-	private int cost;
 	private State previousState;
 	private Coordinate location;
 	
-	public State(int cost, int heuristic, State previousState, Coordinate location) {
-		this.setCost(cost);
+	public State(int heuristic, State previousState, Coordinate location) {
 		this.setHeuristic(heuristic);
 		this.setPreviousState(previousState);
 		this.setLocation(location);
@@ -42,17 +40,4 @@ public class State {
 	public void setLocation(Coordinate location) {
 		this.location = location;
 	}
-
-	public int getCost() {
-		return cost;
-	}
-
-	public void setCost(int cost) {
-		this.cost = cost;
-	}
-	
-	public int getTotalCost() {
-		return this.cost + this.heuristic;
-	}
-	
 }

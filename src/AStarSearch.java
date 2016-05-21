@@ -31,14 +31,14 @@ public class AStarSearch {
 		//initialise first state
 		int startingHeuristic = h.getHeuristic(start, dest);
 		int startingCost = 0; //zero cost going from start to start;
-		State initialState = new State(startingCost,startingHeuristic, null, start);
+		State initialState = new State(startingHeuristic, null, start);
 		queue.add(initialState);
 		State curState = null;
 		
 		while (!queue.isEmpty()) {
 			curState = queue.poll();
-			//System.out.print("currState: ");
-			//curState.getLocation().print();
+			System.out.print("currState: ");
+			curState.getLocation().print();
 			
 			visitedNodes.add (curState.getLocation());
 			
@@ -96,13 +96,13 @@ public class AStarSearch {
 		Coordinate eastCoord = new Coordinate(curLocation.x+1,curLocation.y);
 		Coordinate westCoord = new Coordinate(curLocation.x-1,curLocation.y);
 		
-		State northState = new State (curState.getCost()+1, h.getHeuristic(northCoord, dest), 
+		State northState = new State (h.getHeuristic(northCoord, dest), 
 				curState, northCoord);
-		State southState = new State (curState.getCost()+1, h.getHeuristic(southCoord, dest), 
+		State southState = new State (h.getHeuristic(southCoord, dest), 
 				curState, southCoord);
-		State eastState = new State (curState.getCost()+1, h.getHeuristic(eastCoord, dest), 
+		State eastState = new State (h.getHeuristic(eastCoord, dest), 
 				curState, eastCoord);
-		State westState = new State (curState.getCost()+1, h.getHeuristic(westCoord, dest), 
+		State westState = new State (h.getHeuristic(westCoord, dest), 
 				curState, westCoord);
 		
 		boolean northVisited = false;
