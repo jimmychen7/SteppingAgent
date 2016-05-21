@@ -41,7 +41,13 @@ public class Agent {
 	   if(goal.equals(currentGoal)) {
 		   //path was already found previously
 	       System.out.println("Going to previous Goal");
-		   ch = getCommand();
+		   try {
+			ch = getCommand();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	   } else {
 		   //make new goal path 
 	       System.out.println("Going to new Goal");
@@ -159,15 +165,14 @@ public class Agent {
    /**
     * getCommand without parameters returns the next command on the commands stack
     * @return The next command on the commands queue
+    * @throws Exception Throws exception when something goes wrong.
     */
-   	private char getCommand() {
+   	private char getCommand() throws Exception {
    	    if (commands.isEmpty()) {
-   	        try {
-   	            currentGoal = agentMap.getNodeToVisit();
-   	            getCommand (currentGoal);
-   	        } catch (Exception e) {
-   	            e.printStackTrace();
-   	        }
+   	        //throw new IndexOutOfBoundsException ("Command list empty");
+   	    	Coordinate goal = agentMap.getNodeToVisit();
+   	    	currentGoal = goal;
+   	    	return getCommand (goal);
    	    }
    	    return commands.poll();
    	}
@@ -181,6 +186,9 @@ public class Agent {
    	 *      more information.
    	 */
    	private char getCommand (Coordinate newGoal) throws Exception {
+   		//clear our commands list
+   		commands.clear();
+   		
    	    if (newGoal.equals(agentMap.getCurrPosition())) {
    	        throw new Exception ("New goal cannot be agent's current position");
    	    }
