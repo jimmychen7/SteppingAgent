@@ -35,14 +35,20 @@ public class Agent {
 	   }
 	   
 	   // get character to use to get to goal
-	   if(goal.equals(coordSeqToGoal.getGoal())) {
+	   if(goal.equals(currentGoal)) {
 		   //path was already found previously
 	       System.out.println("Going to previous Goal");
-		   ch = getCommandRepeatedSeq(coordSeqToGoal.getPath());
+		   ch = getCommand();
 	   } else {
-		   //make new coordSeq to goal.
+		   //make new goal path 
 	       System.out.println("Going to new Goal");
-		   ch = getCommand(getPath(goal));
+		   try {
+            ch = getCommand(goal);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+		   currentGoal = goal.clone();
 	   }
 	   
 	   switch( ch ) { // if character is a valid action update our agentMap accordingly.
@@ -92,8 +98,7 @@ public class Agent {
 	   int port;
 	   int ch;
 	   int i,j;
-	   coordSeqToGoal = new CoordinateSequence(new Coordinate(79,79), new ArrayList<Coordinate>()); //No goal and coordSeq defined
-      
+	   //coordSeqToGoal = new CoordinateSequence(new Coordinate(79,79), new ArrayList<Coordinate>()); //No goal and coordSeq defined
 
 	   if( args.length < 2 ) {
 		   System.out.println("Usage: java Agent -p <port>\n");
@@ -147,108 +152,99 @@ public class Agent {
 		   catch( IOException e ) {}
 	   }
    	}
-   
-   	private List<Coordinate> getPath(Coordinate destination) {
-   		
-   		AStarSearch search = new AStarSearch();
-   		ArrayList<Coordinate> coordinatePath = search.getPath(agentMap.getCurrPosition(), 
-   				destination, agentMap);
-   		
-   		coordSeqToGoal = new CoordinateSequence(destination, coordinatePath);
-   		return coordinatePath;
-   		
-   		
+   	
+   /**
+    * getCommand without parameters returns the next command on the commands stack
+    * @return The next command on the commands queue
+    */
+   	private char getCommand() {
+   	    if (commands.isEmpty()) {
+   	        try {
+   	            currentGoal = agentMap.getNodeToVisit();
+   	            if (agentMap.getTools().isHasGold()) {
+   	                currentGoal = new Coordinate(79, 79);
+   	            }
+   	            getCommand (currentGoal);
+   	        } catch (Exception e) {
+   	            e.printStackTrace();
+   	        }
+   	    }
+   	    return commands.poll();
    	}
    	
-   	private char getCommand(List<Coordinate> list) {
-   		Coordinate[] coordinatePathArray = list.toArray(
-   				new Coordinate[list.size()]);
-   		System.out.println("\nCoordinate sequence: ");
-   		for (Coordinate c : coordinatePathArray) {
-   		    c.print();
-   		}
-   		if (coordinatePathArray.length < 2) {
-   		    
-   			return 'e'; //error
-   		}
-   		
-   		List<Character> commandList = new LinkedList<Character>();
-   		int playerOrientation = agentMap.getDirection();
-   		for (int i = 1; i < coordinatePathArray.length; i++) {
-   			Coordinate before = coordinatePathArray[i - 1];
-   			Coordinate after  = coordinatePathArray[i];
-   			
-   			//Figure out how to get from before to after
-   			int direction = getDirection (before, after);
-   			int relativeDirection = direction - playerOrientation;
-   			
-			while (relativeDirection != 0) { //realign player while not oriented correctly
-				playerOrientation++;
-				commandList.add('l');
-				if (playerOrientation > SOUTH) {
-					playerOrientation -= 4;
-				}
-				
-				relativeDirection = direction - playerOrientation;
-			}
-			if(agentMap.getAgentElements()[after.y][after.x].isTree() && agentMap.getTools().isHasAxe()) {
-				commandList.add('c');
-			} else if(agentMap.getAgentElements()[after.y][after.x].isDoor() && agentMap.getTools().isHasKey()) {
-				commandList.add('u');
-			}
-			commandList.add('f');
-			
-   		}
-   		
-   		return commandList.get(0);
-   	}
-   	
-   	public char getCommandRepeatedSeq(List<Coordinate> list) {
-   	 Coordinate[] coordinatePathArray = list.toArray(
-             new Coordinate[list.size()]);
-     
-   	 List<Character> commandList = new LinkedList<Character>();
-     int playerOrientation = agentMap.getDirection();
-     int j = 1;
-     
-     if(coordinatePathArray.length > 2) {
-         for(j = 0; j < coordinatePathArray.length; j++) {
-             if(coordinatePathArray[j].equals(agentMap.getCurrPosition()));
-         }
-     }
-     
-     
-     
-     
-     for (int i = j; i < coordinatePathArray.length; i++) {
-         Coordinate before = coordinatePathArray[i - 1];
-         Coordinate after  = coordinatePathArray[i];
-         
-         //Figure out how to get from before to after
-         int direction = getDirection (before, after);
-         int relativeDirection = direction - playerOrientation;
-         
-         while (relativeDirection != 0) { //realign player while not oriented correctly
-             playerOrientation++;
-             commandList.add('l');
-             if (playerOrientation > SOUTH) {
-                 playerOrientation -= 4;
-             }
-             
-             relativeDirection = direction - playerOrientation;
-         }
-         if(agentMap.getAgentElements()[after.y][after.x].isTree() && agentMap.getTools().isHasAxe()) {
-             commandList.add('c');
-         } else if(agentMap.getAgentElements()[after.y][after.x].isDoor() && agentMap.getTools().isHasKey()) {
-             commandList.add('u');
-         }
-         commandList.add('f');
-         
-     }
-     
-     return commandList.get(0);
-   	 
-   	
+   	/**
+   	 * getCommand with new goal parameter. First searches for the path, and converts it into a series of
+   	 * commands. The first command on the stack is returned.
+   	 * @param newGoal
+   	 * @return the first command from the commands queue
+   	 * @throws Exception Exception thrown when unexpected events happen. See exception messages for
+   	 *      more information.
+   	 */
+   	private char getCommand (Coordinate newGoal) throws Exception {
+   	    if (newGoal.equals(agentMap.getCurrPosition())) {
+   	        throw new Exception ("New goal cannot be agent's current position");
+   	    }
+   	    AStarSearch search = new AStarSearch();
+   	    ArrayList<Coordinate> coordinatePath = search.getPath(
+   	            agentMap.getCurrPosition(), newGoal, agentMap);
+   	    
+   	    Coordinate[] coordinatePathArray = new Coordinate[coordinatePath.size()];
+   	    coordinatePath.toArray(coordinatePathArray);
+   	    
+   	    if (coordinatePathArray.length < 2) {
+   	        throw new Exception ("Invalid path. Path must be of length 2 or greater");
+   	    }
+   	    int currentPlayerDirection = agentMap.getDirection();
+   	    for (int i = 1; i < coordinatePathArray.length; i++) {
+   	        //determine whether we need to change directions
+   	        Coordinate currCoord = coordinatePathArray[i-1];
+   	        Coordinate nextCoord = coordinatePathArray[i];
+   	        int directionToNext = getDirection (currCoord, nextCoord);
+   	        
+   	        while (currentPlayerDirection != directionToNext) {
+   	            //determine which direction to turn to if player not facing same direction.
+   	            
+   	            //turn left
+   	            commands.add('l');
+   	            currentPlayerDirection++;
+   	            if (currentPlayerDirection > 3) {
+   	                currentPlayerDirection -= 4;
+   	            }
+   	        }
+   	        //determine whether we need to do a certain action (e.g. cut wood, unlock door)
+   	        AgentElement[][] mapElements = agentMap.getAgentElements();
+   	        AgentElement nextElement = mapElements[nextCoord.y][nextCoord.x]; //[y][x]
+   	        if (nextElement.isObstacle()) { 
+   	            ToolBox currentTools = agentMap.getTools();
+   	            if (nextElement.isTree()) {
+   	                if (currentTools.isHasAxe()) {
+   	                    commands.add('c');
+   	                } else {
+   	                    throw new Exception ("Agent attempting to go through tree without an axe");
+   	                }
+   	            } else if (nextElement.isDoor()) {
+   	                if (currentTools.isHasKey()) {
+   	                    commands.add('u');
+   	                } else {
+   	                    throw new Exception ("Agent attempting to go through door without a key");
+   	                }
+   	            } else if (nextElement.isWater()) {
+   	                if (!(currentTools.getNumSteppingStones() > 0)) {
+   	                    throw new Exception ("Agent attempting to go into water without any stepping stones");
+   	                }
+   	            } else if (nextElement.isWall()) {
+   	                throw new Exception ("Agent attempting to walk into a wall");
+   	            } else {
+   	                throw new Exception ("Agent attemptping to walk into unknown obstacle");
+   	            }
+   	        }
+   	        
+   	        //go forward and make the move.
+   	        commands.add('f');
+   	        
+   	    }
+   	    return commands.poll();
+   	    
    	}
    	
    	private int getDirection (Coordinate start, Coordinate dest) {
@@ -277,5 +273,7 @@ public class Agent {
     boolean have_gold = false;
     int num_stones_held = 0;
     static CoordinateSequence coordSeqToGoal;
+    Queue<Character> commands = new LinkedList<Character>();
+    Coordinate currentGoal = new Coordinate(79, 79); //agent's starting position
    
 }

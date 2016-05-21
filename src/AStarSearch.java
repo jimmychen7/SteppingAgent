@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class AStarSearch {
-	Heuristic h = new StraightLineDistanceHeuristic();
+	Heuristic h = new ManhattanDistanceHeuristic();
 	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());
 	
 	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
@@ -43,6 +43,7 @@ public class AStarSearch {
 			for (State futureState : futureStates) {
 				int x = futureState.getLocation().x;
 				int y = futureState.getLocation().y;
+				System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
 				if (!elements[y][x].isObstacle()) {
 					queue.add(futureState);
 				}
@@ -81,13 +82,13 @@ public class AStarSearch {
 		westCoord.x--;
 		
 		State northState = new State (h.getHeuristic(northCoord, dest), 
-				curState, dest);
+				curState, northCoord);
 		State southState = new State (h.getHeuristic(southCoord, dest), 
-				curState, dest);
+				curState, southCoord);
 		State eastState = new State (h.getHeuristic(eastCoord, dest), 
-				curState, dest);
+				curState, eastCoord);
 		State westState = new State (h.getHeuristic(westCoord, dest), 
-				curState, dest);
+				curState, westCoord);
 		
 		for(State visitedNode : visitedNodes) {
 			if (!northState.equals(visitedNode)) {

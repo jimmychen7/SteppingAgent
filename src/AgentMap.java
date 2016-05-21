@@ -225,7 +225,8 @@ public class AgentMap {
 		}		
 		
 		//Else make decision 
-		
+		System.out.println("NULL DECISION!");
+		System.exit(-1);
 		
 		return null;
 	}

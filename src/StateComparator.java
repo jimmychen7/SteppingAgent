@@ -8,7 +8,7 @@ public class StateComparator implements Comparator<State> {
 			return -1;
 		}
 		if (arg1.getHeuristic() < arg0.getHeuristic()) {
-			return -1;
+			return 1;
 		}
 		return 0;
 	}
