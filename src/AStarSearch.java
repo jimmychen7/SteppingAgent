@@ -15,6 +15,10 @@ public class AStarSearch {
 
 	    System.out.print("Search destination: ");
 	    dest.print();
+	    
+	    if(!agentMap.getAgentElements()[dest.y][dest.x].isReachable()) {
+	    	System.out.println("GOAL NOT REACHABLE");
+	    }
 
 		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
 		
@@ -22,17 +26,21 @@ public class AStarSearch {
 			return path;
 		}
 		
-		List<State> visitedNodes = new ArrayList<State>();
+		List<Coordinate> visitedNodes = new ArrayList<Coordinate>();
 		
 		//initialise first state
 		int startingHeuristic = h.getHeuristic(start, dest);
-		State initialState = new State(startingHeuristic, null, start);
+		int startingCost = 0; //zero cost going from start to start;
+		State initialState = new State(startingCost,startingHeuristic, null, start);
 		queue.add(initialState);
 		State curState = null;
 		
 		while (!queue.isEmpty()) {
 			curState = queue.poll();
-			visitedNodes.add (curState);
+			System.out.print("currState: ");
+			curState.getLocation().print();
+			
+			visitedNodes.add (curState.getLocation());
 			
 			if (curState.getLocation().equals(dest)) {
 				break;
@@ -45,9 +53,11 @@ public class AStarSearch {
 				int y = futureState.getLocation().y;
 				System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
 				if (!elements[y][x].isObstacle()) {
+					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
 					queue.add(futureState);
 				}
 			}
+			System.out.println("\n\n");
 		}
 		System.out.print("curState = ");
 		curState.getLocation().print();
@@ -67,40 +77,45 @@ public class AStarSearch {
 		return path;
 	}
 
-	private List<State> getFutureStates(State curState, List<State> visitedNodes, Coordinate dest) {
+	private List<State> getFutureStates(State curState, List<Coordinate> visitedNodes, Coordinate dest) {
 		List<State> futureStates = new LinkedList<State>();
 		//Get coordinates
 		Coordinate curLocation = curState.getLocation();
 		
-		Coordinate northCoord = curLocation.clone();
+		Coordinate northCoord = new Coordinate(curLocation.x,curLocation.y-1);
+		Coordinate southCoord = new Coordinate(curLocation.x,curLocation.y+1);
+		Coordinate eastCoord = new Coordinate(curLocation.x+1,curLocation.y);
+		Coordinate westCoord = new Coordinate(curLocation.x-1,curLocation.y);
+		
+		/*Coordinate northCoord = curLocation.clone();
 		northCoord.y--;
 		Coordinate southCoord = curLocation.clone();
 		southCoord.y++;
 		Coordinate eastCoord = curLocation.clone();
 		eastCoord.x++;
 		Coordinate westCoord = curLocation.clone();
-		westCoord.x--;
+		westCoord.x--;*/
 		
-		State northState = new State (h.getHeuristic(northCoord, dest), 
+		State northState = new State (curState.getCost()+1, h.getHeuristic(northCoord, dest), 
 				curState, northCoord);
-		State southState = new State (h.getHeuristic(southCoord, dest), 
+		State southState = new State (curState.getCost()+1, h.getHeuristic(southCoord, dest), 
 				curState, southCoord);
-		State eastState = new State (h.getHeuristic(eastCoord, dest), 
+		State eastState = new State (curState.getCost()+1, h.getHeuristic(eastCoord, dest), 
 				curState, eastCoord);
-		State westState = new State (h.getHeuristic(westCoord, dest), 
+		State westState = new State (curState.getCost()+1, h.getHeuristic(westCoord, dest), 
 				curState, westCoord);
 		
-		for(State visitedNode : visitedNodes) {
-			if (!northState.equals(visitedNode)) {
+		for(Coordinate visitedNode : visitedNodes) {
+			if (!northState.getLocation().equals(visitedNode)) {
 				futureStates.add(northState);
 			}
-			if (!eastState.equals(visitedNode)) {
+			if (!eastState.getLocation().equals(visitedNode)) {
 				futureStates.add(eastState);
 			}
-			if (!southState.equals(visitedNode)) {
+			if (!southState.getLocation().equals(visitedNode)) {
 				futureStates.add(southState);
 			}
-			if (!westState.equals(visitedNode)) {
+			if (!westState.getLocation().equals(visitedNode)) {
 				futureStates.add(westState);
 			}
 			

@@ -30,12 +30,12 @@ public class Agent {
 		   goal = agentMap.getNodeToVisit();
 	   }
 	   
-	   //debug
+	   /*debug
 	   if (goal == null) {
 	       System.out.println("NULL!");
 	   } else {
 	       System.out.println("NOT NULL!");
-	   }
+	   }*/
 	   
 	   // get character to use to get to goal
 	   if(goal.equals(currentGoal)) {
