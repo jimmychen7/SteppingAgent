@@ -16,8 +16,11 @@ public class Agent {
 
      public char get_action( char view[][] ) { 
 	   int ch=0;
-	   Coordinate goal = new Coordinate(-1, -1);
-	   
+	   Coordinate goal = null;
+	   if (homeCoordinate == null) {
+	       homeCoordinate = agentMap.getCurrPosition();
+	   }
+	   checkOnGold();
 	   //Find goal(Coordinate) to go to.
 	   if(agentMap.getTools().isHasGold()) {
 		   //have gold, go to start.
@@ -260,6 +263,14 @@ public class Agent {
    		
    		return -1; //if shit hits the fan, this happens
    	}
+   	
+   	private void checkOnGold() {
+   	    int x = agentMap.getCurrPosition().x;
+   	    int y = agentMap.getCurrPosition().y;
+   	    if (agentMap.getAgentElements()[y][x].isGold()) {
+   	        agentMap.getTools().setHasGold(true);
+   	    }
+   	}
    
    	
     final static int EAST   = 0;
@@ -272,5 +283,6 @@ public class Agent {
     static CoordinateSequence coordSeqToGoal;
     Queue<Character> commands = new LinkedList<Character>();
     Coordinate currentGoal = new Coordinate(79, 79); //agent's starting position
+    static Coordinate homeCoordinate = null;
    
 }

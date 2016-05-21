@@ -84,7 +84,7 @@ public class AgentMap {
 	}
 	
 	public Coordinate getCurrPosition() {
-		return this.currPosition;
+		return this.currPosition.clone();
 	}
 	
 	ToolBox getTools() {
