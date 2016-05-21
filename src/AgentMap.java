@@ -84,7 +84,7 @@ public class AgentMap {
 	}
 	
 	public Coordinate getCurrPosition() {
-		return this.currPosition;
+		return this.currPosition.clone();
 	}
 	
 	ToolBox getTools() {
@@ -92,6 +92,9 @@ public class AgentMap {
 	}
 	
 	public Coordinate getNodeToVisit() {
+	    if (getTools().isHasGold()) {
+	        return new Coordinate(79, 79); //set goal to home if agent possesses gold
+	    }
 		//Gold
 		Coordinate goldPos = null;
 		Coordinate axePos = null;
@@ -225,7 +228,8 @@ public class AgentMap {
 		}		
 		
 		//Else make decision 
-		
+		System.out.println("NULL DECISION!");
+		System.exit(-1);
 		
 		return null;
 	}
