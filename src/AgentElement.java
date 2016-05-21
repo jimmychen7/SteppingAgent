@@ -71,7 +71,7 @@ public class AgentElement {
 		return (this.symbol.equals("O")) ? true: false;
 	}
 	public boolean isGold() {
-		return (this.symbol.equals('g')) ? true: false;
+		return (this.symbol.equals("g")) ? true: false;
 	}
 	
 	public boolean isObstacle() {

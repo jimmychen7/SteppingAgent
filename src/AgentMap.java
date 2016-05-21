@@ -79,6 +79,7 @@ public class AgentMap {
 		} else if (currElement.isStone()) {
 			tools.setNumSteppingStones(tools.getNumSteppingStones()+1);
 		} else if (currElement.isGold()) {
+			System.out.println("GOT GOLD#############");
 			tools.setHasGold(true);
 		}		
 	}
@@ -221,7 +222,7 @@ public class AgentMap {
 			    */ //DEBUG
 				if(!agentMap[y][x].getIsVisited() && agentMap[y][x].isReachable() &&
 				        !agentMap[y][x].isObstacle()) {
-				    System.out.println("Node to visit = x: " + x + " y: " + y);
+				    //System.out.println("Node to visit = x: " + x + " y: " + y);
 					return new Coordinate(x,y);
 				}
 			}
