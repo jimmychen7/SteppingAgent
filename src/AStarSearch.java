@@ -3,13 +3,20 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class AStarSearch {
 	Heuristic h = new StraightLineDistanceHeuristic();
 	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());
 	
-	public List<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
-		LinkedList<Coordinate> path = new LinkedList<Coordinate>();
+	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
+	    System.out.print("Search start: ");
+        start.print();
+
+	    System.out.print("Search destination: ");
+	    dest.print();
+
+		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
 		
 		if (start.equals(dest)) {
 			return path;
@@ -41,13 +48,18 @@ public class AStarSearch {
 				}
 			}
 		}
-		
+		System.out.print("curState = ");
+		curState.getLocation().print();
+		Stack<Coordinate> s = new Stack<Coordinate>();
 		//create path from state
 		while (curState != null) {
-			path.addFirst(curState.getLocation());
+			s.push(curState.getLocation());
 			curState = curState.getPreviousState();
 		}
-		System.out.print("Path to goal: ");
+		while (!s.isEmpty()) {
+		    path.add(s.pop());
+		}
+		System.out.println("Path to goal: ");
 		for (Coordinate c : path) {
 			System.out.print ("(" + c.x + ", " + c.y + "); ");
 		}
@@ -59,13 +71,13 @@ public class AStarSearch {
 		//Get coordinates
 		Coordinate curLocation = curState.getLocation();
 		
-		Coordinate northCoord = curLocation;
+		Coordinate northCoord = curLocation.clone();
 		northCoord.y--;
-		Coordinate southCoord = curLocation;
+		Coordinate southCoord = curLocation.clone();
 		southCoord.y++;
-		Coordinate eastCoord = curLocation;
+		Coordinate eastCoord = curLocation.clone();
 		eastCoord.x++;
-		Coordinate westCoord = curLocation;
+		Coordinate westCoord = curLocation.clone();
 		westCoord.x--;
 		
 		State northState = new State (h.getHeuristic(northCoord, dest), 

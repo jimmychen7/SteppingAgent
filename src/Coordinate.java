@@ -10,4 +10,12 @@ public class Coordinate {
 	public boolean equals(Coordinate k) {
 		return (k.x == this.x && k.y == this.y) ? true: false;
 	}
+	
+	public void print() {
+	    System.out.println("(" + x + "," + y + ")");
+	}
+	public Coordinate clone() {
+	    Coordinate c = new Coordinate(this.x, this.y);
+	    return c;
+	}
 }

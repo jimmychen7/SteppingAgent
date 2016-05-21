@@ -3,6 +3,8 @@ public class AgentElement {
 	public AgentElement(String symbol) {
 		this.symbol = symbol;
 		this.visited = false;
+		this.setReachable(false);
+		
 	}
 	
 	public String getSymbol() {
@@ -75,10 +77,19 @@ public class AgentElement {
 	public boolean isObstacle() {
 		if(isWater() || isWall() || isTree() || isDoor()) return true;
 		return false;
+	}	
+	
+	public boolean isReachable() {
+		return reachable;
 	}
-	
-	
-	
+
+	public void setReachable(boolean reachable) {
+		this.reachable = reachable;
+	}
+
+
+
 	private String symbol; // Can be "path", "unknown",       "tree", "water",  "stone", "door", "wall", "axe", "key", "gold". 
 	private Boolean visited;
+	private boolean reachable;
 }
