@@ -1,20 +1,31 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+/**
+ * 
+ * @author Jimmy Chen, Weilon Ying
+ * A* Search class. Used to find a path from one location to another
+ */
 public class AStarSearch {
+    //The search will used the Manhattan Distance Heuristic, which is our best admissible heuristic for this game
 	Heuristic h = new ManhattanDistanceHeuristic();
-	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());
 	
-	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
-	    System.out.print("Search start: ");
-        start.print();
-
-	    System.out.print("Search destination: ");
-	    dest.print();
+	//queue will contain a priority queue of possible future steps to take in the path. The ones with the
+	//lowest heuristic will be placed first
+	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());	
+	
+	/**
+	 * getPath method searches for the best path from a specific starting and destination coordinate
+	 * @param start The agent's starting location
+	 * @param dest The agent's destination location
+	 * @param agentState The agent's current state
+	 * @return An array list of coordinates that, when followed in sequential order will define a path
+	 *     from the starting location to the destination location
+	 */
+	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentState agentMap) {
 
 		ArrayList<Coordinate> path = new ArrayList<Coordinate>();
 		
@@ -26,17 +37,13 @@ public class AStarSearch {
 		
 		//initialise first state
 		int startingHeuristic = h.getHeuristic(start, dest);
-		int startingCost = 0; //zero cost going from start to start;
 		State initialState = new State(startingHeuristic, null, start);
 		visitedNodes.add(initialState.getLocation().clone());
 		queue.add(initialState);
 		State curState = null;
 		
-		while (!queue.isEmpty()) {
-			curState = queue.poll();
-			System.out.print("currState: ");
-			curState.getLocation().print();
-			
+		while (true) {
+			curState = queue.poll();			
 			//visitedNodes.add (curState.getLocation());
 			
 			if (curState.getLocation().equals(dest)) {
@@ -48,26 +55,25 @@ public class AStarSearch {
 			for (State futureState : futureStates) {
 				int x = futureState.getLocation().x;
 				int y = futureState.getLocation().y;
-				//System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
 				if (elements[y][x].isObstacle()) {
-					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
 					if(elements[y][x].isDoor() && agentMap.getTools().isHasKey()) {
 						queue.add(futureState);
 						visitedNodes.add (futureState.getLocation());
 					} else if (elements[y][x].isTree() && agentMap.getTools().isHasAxe()) {
 						queue.add(futureState);
 						visitedNodes.add (futureState.getLocation());
+					}  else if (elements[y][x].isWater() && dest.equals(new Coordinate(x,y))) {
+						queue.add(futureState);
+						visitedNodes.add (futureState.getLocation());
 					}
 						
-				} else {
+				} else if (!elements[y][x].isUnknown()){
 					queue.add(futureState);
 					visitedNodes.add (futureState.getLocation());
 				}
 			}
-			//System.out.println("\n\n");
 		}
-		System.out.print("curState = ");
-		curState.getLocation().print();
+		
 		Stack<Coordinate> s = new Stack<Coordinate>();
 		
 		//create path from state
@@ -78,14 +84,17 @@ public class AStarSearch {
 		while (!s.isEmpty()) {
 		    path.add(s.pop());
 		}
-		
-		System.out.println("Path to goal: ");
-		for (Coordinate c : path) {
-			System.out.print ("(" + c.x + ", " + c.y + "); ");
-		}
 		return path;
 	}
-
+	
+	/**
+	 * getFutureStates is a helper method for getPath() that gets possible future states (steps in the path) that the agent
+	 * could take.
+	 * @param curState The current state in the getPath() search being considered
+	 * @param visitedNodes A list of nodes "visited" in the getPath() search so far
+	 * @param dest The destination location of the search
+	 * @return A list of states (possible future steps) that the search could take
+	 */
 	private List<State> getFutureStates(State curState, List<Coordinate> visitedNodes, Coordinate dest) {
 		List<State> futureStates = new LinkedList<State>();
 		//Get coordinates
