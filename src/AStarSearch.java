@@ -4,12 +4,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
-
+/**
+ * 
+ * @author Jimmy Chen, Weilon Ying
+ * A* Search class. Used to find a path from one location to another
+ */
 public class AStarSearch {
-	Heuristic h = new ManhattanDistanceHeuristic();
+    //The search will used the Manhattan Distance Heuristic, which is our best admissible heuristic for this game
+	Heuristic h = new ManhattanDistanceHeuristic(); 
+	
+	//queue will contain a priority queue of possible future steps to take in the path. The ones with the
+	//lowest heuristic will be placed first
 	PriorityQueue<State> queue = new PriorityQueue<State>(1, new StateComparator());
 	
-	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentMap agentMap) {
+	/**
+	 * getPath method searches for the best path from a specific starting and destination coordinate
+	 * @param start The agent's starting location
+	 * @param dest The agent's destination location
+	 * @param agentState The agent's current state
+	 * @return An array list of coordinates that, when followed in sequential order will define a path
+	 *     from the starting location to the destination location
+	 */
+	public ArrayList<Coordinate> getPath (Coordinate start, Coordinate dest, AgentState agentState) {
 	    System.out.print("Search start: ");
         start.print();
 
@@ -44,17 +60,17 @@ public class AStarSearch {
 			}
 			
 			List<State> futureStates = getFutureStates (curState, visitedNodes, dest);
-			AgentElement[][] elements = agentMap.getAgentElements();
+			AgentElement[][] elements = agentState.getAgentElements();
 			for (State futureState : futureStates) {
 				int x = futureState.getLocation().x;
 				int y = futureState.getLocation().y;
 				//System.out.printf("futureState x = %d, y = %d\n", x, y); //debug
 				if (elements[y][x].isObstacle()) {
 					//System.out.printf("futureState to visit x = %d, y = %d\n", x, y);
-					if(elements[y][x].isDoor() && agentMap.getTools().isHasKey()) {
+					if(elements[y][x].isDoor() && agentState.getTools().isHasKey()) {
 						queue.add(futureState);
 						visitedNodes.add (futureState.getLocation());
-					} else if (elements[y][x].isTree() && agentMap.getTools().isHasAxe()) {
+					} else if (elements[y][x].isTree() && agentState.getTools().isHasAxe()) {
 						queue.add(futureState);
 						visitedNodes.add (futureState.getLocation());
 					}
@@ -85,7 +101,15 @@ public class AStarSearch {
 		}
 		return path;
 	}
-
+	
+	/**
+	 * getFutureStates is a helper method for getPath() that gets possible future states (steps in the path) that the agent
+	 * could take.
+	 * @param curState The current state in the getPath() search being considered
+	 * @param visitedNodes A list of nodes "visited" in the getPath() search so far
+	 * @param dest The destination location of the search
+	 * @return A list of states (possible future steps) that the search could take
+	 */
 	private List<State> getFutureStates(State curState, List<Coordinate> visitedNodes, Coordinate dest) {
 		List<State> futureStates = new LinkedList<State>();
 		//Get coordinates
